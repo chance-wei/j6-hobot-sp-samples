@@ -36,6 +36,7 @@ struct arguments
     int width;
     int height;
     int bit;
+    int fps;
     int count;
 };
 static char doc[] = "capture sample -- An example of capture yuv/raw";
@@ -43,6 +44,7 @@ static struct argp_option options[] = {
     {"width", 'w', "width", 0, "sensor output width"},
     {"height", 'h', "height", 0, "sensor output height"},
     {"bit", 'b', "bit", 0, "the depth of raw,mostly is 10,imx477 is 12"},
+    {"fps", 'f', "fps", 0, "sensor fps"},
     {"count", 'c', "number", 0, "capture number"},
     {0}};
 static error_t parse_opt(int key, char *arg, struct argp_state *state)
@@ -62,9 +64,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
     case 'c':
         args->count = atoi(arg);
         break;
+    case 'f':
+        args->fps = atoi(arg);
+        break;
     case ARGP_KEY_END:
     {
-        if (state->argc < 8)
+        if (state->argc < 10)
         {
             argp_state_help(state, stdout, ARGP_HELP_STD_HELP);
         }
@@ -90,7 +95,7 @@ int main(int argc, char **argv)
     int raw_size = (stride * args.height); // raw_size = stride * height, stride = width * bit / 8 (align with 16)
     int yuv_size = FRAME_BUFFER_SIZE(args.width, args.height);
     sp_sensors_parameters parms;
-    parms.fps = -1;
+    parms.fps = args.fps;
     parms.raw_height = args.height;
     parms.raw_width = args.width;
     char ch = 0;

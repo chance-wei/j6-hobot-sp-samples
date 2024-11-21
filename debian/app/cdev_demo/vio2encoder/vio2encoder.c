@@ -21,6 +21,7 @@ struct arguments
     int output_width;
     int input_height;
     int input_width;
+    int fps;
 };
 static struct argp_option options[] = {
     {"output", 'o', "path", 0, "output file path"},
@@ -28,6 +29,7 @@ static struct argp_option options[] = {
     {"oheight", 'h', "height", 0, "height of output video"},
     {"iwidth", 0x81, "width", 0, "sensor output width"},
     {"iheight", 0x82, "height", 0, "sensor output height"},
+    {"fps", 'f', "fps", 0, "sensor fps"},
     {0}};
 static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
@@ -43,6 +45,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
     case 'h':
         args->output_height = atoi(arg);
         break;
+    case 'f':
+        args->fps = atoi(arg);
+        break;
     case 0x81:
         args->input_width = atoi(arg);
         break;
@@ -51,7 +56,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
         break;
     case ARGP_KEY_END:
     {
-        if (state->argc != 11)
+        if (state->argc != 13)
         {
             argp_state_help(state, stdout, ARGP_HELP_STD_HELP);
         }
@@ -84,7 +89,7 @@ int main(int argc, char **argv)
     // int heights[1] = {height};
 
     sp_sensors_parameters parms;
-    parms.fps = -1;
+    parms.fps = args.fps;
     parms.raw_height = args.input_height;
     parms.raw_width = args.input_width;
 
